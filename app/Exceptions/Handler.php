@@ -2,7 +2,11 @@
 
 namespace App\Exceptions;
 
+use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -18,13 +22,28 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
-    /**
-     * Register the exception handling callbacks for the application.
-     */
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
             //
         });
     }
+
+	public function render($request, Throwable $exception)
+	{
+		return response()->json([
+			'success' => false,
+			'errors' => $exception->getMessage(),
+		], 500);
+
+		return parent::render($request, $exception);
+	}
+
+    protected function invalidJson($request, ValidationException $exception): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'errors' => $exception->errors(),
+        ], $exception->status);
+    }	
 }
