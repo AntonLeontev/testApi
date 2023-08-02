@@ -11,7 +11,11 @@ class StockController extends Controller
 {
     public function sync(StocksSyncRequest $request, StocksSyncAction $action): JsonResponse
 	{
-		$action($request);
+		try {
+			$action($request);
+		} catch (\Throwable $th) {
+			abort(500, $th->getMessage());
+		}
 
 		return response()->json(['success' => true]);
 	}

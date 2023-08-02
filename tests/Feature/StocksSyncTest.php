@@ -160,7 +160,6 @@ class StocksSyncTest extends TestCase
 			$data
 		);
 
-
 		$response->assertJson(['success' => false]);
 		$response->assertJsonStructure(['success', 'errors']);
     }

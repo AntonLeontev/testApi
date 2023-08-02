@@ -31,19 +31,17 @@ class Handler extends ExceptionHandler
 
 	public function render($request, Throwable $exception)
 	{
+		if ($exception instanceof ValidationException) {
+			return response()->json([
+				'success' => false,
+				'errors' => $exception->errors(),
+			], $exception->status);
+		}
+
+
 		return response()->json([
 			'success' => false,
-			'errors' => $exception->getMessage(),
+			'errors' => [$exception->getMessage()],
 		], 500);
-
-		return parent::render($request, $exception);
 	}
-
-    protected function invalidJson($request, ValidationException $exception): JsonResponse
-    {
-        return response()->json([
-            'success' => false,
-            'errors' => $exception->errors(),
-        ], $exception->status);
-    }	
 }
